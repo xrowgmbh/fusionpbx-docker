@@ -15,11 +15,11 @@ RUN apt-get update \
 		libtiff-tools \
 		nginx \
 		php5 php5-cli php5-fpm php5-pgsql php5-sqlite php5-odbc php5-curl php5-imap php5-mcrypt wget curl openssh-server supervisor net-tools\
-	&& apt-get clean \
-	&& git clone https://github.com/samael33/fusionpbx.git /var/www/fusionpbx
+	&& apt-get clean
 
-RUN chown -R www-data:www-data /var/www/fusionpbx
-RUN wget https://raw.githubusercontent.com/samael33/fusionpbx-install.sh/master/debian/resources/nginx/fusionpbx -O /etc/nginx/sites-available/fusionpbx && ln -s /etc/nginx/sites-available/fusionpbx /etc/nginx/sites-enabled/fusionpbx \
+RUN wget https://raw.githubusercontent.com/samael33/fusionpbx-install.sh/master/debian/resources/nginx/fusionpbx -O /etc/nginx/sites-available/fusionpbx \
+	&& find /etc/nginx/sites-available/fusionpbx -type f -exec sed -i 's/\/var\/run\/php\/php7.0-fpm.sock/\/var\/run\/php5-fpm.sock/g' {} \; \
+	&& ln -s /etc/nginx/sites-available/fusionpbx /etc/nginx/sites-enabled/fusionpbx \
 	&& ln -s /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key \
 	&& ln -s /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt \
 	&& rm /etc/nginx/sites-enabled/default
@@ -51,7 +51,11 @@ RUN usermod -a -G freeswitch www-data \
 	&& chown -R freeswitch:freeswitch /var/log/freeswitch \
 	&& chmod -R ug+rw /var/log/freeswitch \
 	&& find /var/log/freeswitch -type d -exec chmod 2770 {} \;
-ENV PSQL_PASSWORD="4321"  
+
+RUN mkdir /etc/fusionpbx \
+	&& chown www-data. /etc/fusionpbx \
+	&& find /etc/freeswitch/autoload_configs/event_socket.conf.xml -type f -exec sed -i 's/::/127.0.0.1/g' {} \;
+ENV PSQL_PASSWORD="4321"
 RUN password=$(dd if=/dev/urandom bs=1 count=20 2>/dev/null | base64) \
 	&& apt-get install -y --force-yes sudo postgresql \
 	&& apt-get clean
@@ -68,8 +72,10 @@ USER root
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-freeswitch.sh /usr/bin/start-freeswitch.sh
 
-EXPOSE 80,443,5060/udp
-VOLUME ["/var/lib/postgresql", "/etc/freeswitch", "/var/lib/freeswitch", "/usr/share/freeswitch", "/var/www/fusionpbx"]
+EXPOSE 80
+EXPOSE 443
+EXPOSE 5060/udp
+VOLUME ["/var/lib/postgresql", "/etc/freeswitch", "/var/lib/freeswitch", "/usr/share/freeswitch"]
 CMD /usr/bin/supervisord -n
 
 

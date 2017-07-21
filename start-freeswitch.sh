@@ -9,5 +9,4 @@ sleep 10
 
 # Start server.
 echo 'Starting Freeswitch...'
-/usr/bin/freeswitch -u freeswitch -g freeswitch -rp -nonat
-
+/usr/bin/freeswitch -rp -nonat
