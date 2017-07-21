@@ -89,3 +89,5 @@ We are a **global community** that has an open and **very friendly** eco-system.
 
 
 Most of the core folks who develop and use FusionPBX can be found hanging out in Freenode IRC in the **#fusionpbx** channel. Come join us and meet the team.
+
+-- This fork is mainly focused on running Fusion for deveopment on own machine. So, not for production
