@@ -4,7 +4,7 @@ services:
   fusionpbx:
     build: .
     volumes:
-      - ./fusionpbx:/var/www/fusionpbx/
+      - ./fusionpbx:/var/www/fusionpbx
     ports:
       - "5060:5060/udp"
       - "80:80"

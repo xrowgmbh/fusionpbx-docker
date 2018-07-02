@@ -52,9 +52,7 @@ RUN usermod -a -G freeswitch www-data \
 	&& chmod -R ug+rw /var/log/freeswitch \
 	&& find /var/log/freeswitch -type d -exec chmod 2770 {} \;
 
-RUN mkdir /etc/fusionpbx \
-	&& chown www-data. /etc/fusionpbx \
-	&& find /etc/freeswitch/autoload_configs/event_socket.conf.xml -type f -exec sed -i 's/::/127.0.0.1/g' {} \;
+RUN find /etc/freeswitch/autoload_configs/event_socket.conf.xml -type f -exec sed -i 's/::/127.0.0.1/g' {} \;
 ENV PSQL_PASSWORD="4321"
 RUN password=$(dd if=/dev/urandom bs=1 count=20 2>/dev/null | base64) \
 	&& apt-get install -y --force-yes sudo postgresql \
@@ -77,9 +75,3 @@ EXPOSE 443
 EXPOSE 5060/udp
 VOLUME ["/var/lib/postgresql", "/etc/freeswitch", "/var/lib/freeswitch", "/usr/share/freeswitch"]
 CMD /usr/bin/supervisord -n
-
-
-
-
-
-
