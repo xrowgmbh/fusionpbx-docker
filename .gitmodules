@@ -1,0 +1,4 @@
+[submodule "fusionpbx"]
+    path = fusionpbx
+    url = git@github.com:fusionpbx/fusionpbx.git
+    branch = master
